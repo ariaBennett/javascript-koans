@@ -175,8 +175,74 @@ describe("About Applying What We Have Learnt", function() {
   });
 
   it("should find the smallest number divisible by each of the numbers 1 to 20", function () {
-      
-    
+    isPrime = function(primeCandidate){
+      for (var i = 2; i < primeCandidate; i++) {
+        if (primeCandidate % i === 0) {
+          return false
+        }
+      }
+      return true;
+    };
+
+    productOfPrimes = function(origNum){
+      var primes = {};
+      var mod = 0;
+      var primesFound = false;
+      var num = origNum;
+      while (primesFound === false) {
+        for (var i = 2 + mod; i <= num; i++) {
+          if (isPrime(i)) {
+            var primesPower = (function(){
+              var currentDivisor = i;
+              var multiplier = 1;
+              var highestDivisor = 0;
+              if (num - (currentDivisor * multiplier) > 0) {
+                highestDivisor = multiplier;
+                multiplier += 1;
+              }
+              else {
+                return highestDivisor;
+              }
+            })();
+            num = num - (Math.pow(i, primesPower));
+            primes[i] = primesPower;
+          }
+        }
+        if (num === 0) {
+          primesFound = true;
+        }
+        else {
+          mod += 1;
+          primes = {};
+          num = origNum;
+        }
+      }
+      return primes;
+    };
+
+    smallestNumberDivisableByNumbersUpTo = function(finalNum) {
+      var primes = {};
+      for (var i = 2; i <= finalNum; i++) {
+        var tempPrimes = productOfPrimes(i);
+        console.log(tempPrimes);
+        _.each(_.keys(tempPrimes), function(key){
+          if (!primes[key]) {
+            primes[key] = 0;
+          }
+          if (primes[key] < tempPrimes[key]) {
+            primes[key] = tempPrimes[key];
+          }
+        });
+      }
+      var smallestNumber = 1;
+      _.each(_.keys(primes), function(key){
+        smallestNumber *= Math.pow(key, primes[key]);
+        console.log("number " + key + " to the power of " + primes[key]);
+      });
+      return smallestNumber;
+    };
+
+    expect(smallestNumber.valueOf()).toBe("232792560");
   });
 
   it("should find the difference between the sum of the squares and the square of the sums", function () {
